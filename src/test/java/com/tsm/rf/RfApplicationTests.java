@@ -1,4 +1,4 @@
-package com.tst.rf;
+package com.tsm.rf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

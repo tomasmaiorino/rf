@@ -1,4 +1,4 @@
-package com.tst.rf;
+package com.tsm.rf;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
