@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>Transfer</title>
+<link rel="shortcut icon" href="favicon.ico">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+<!-- Bootstrap core CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="css/mdb.min.css" rel="stylesheet">
+<!-- Your custom styles (optional) -->
+<link href="css/style.css" rel="stylesheet">
+<link href="css/load.css" rel="stylesheet">
+</head>
+
+<body ng-app="Rf">
+
+	<!--Main layout-->
+	<main class="mt-5">
+	<div class="container">
+
+		<!--Section: Contact-->
+		<section id="contact" ng-controller="SendTransferCtrl">
+
+			<div class="row">
+				<!--Grid column-->
+				<div class="col-lg-12 col-md-12">
+					<!-- Heading -->
+					<h2 class="mb-5 font-weight-bold text-center">Transfer</h2>
+				</div>
+			</div>
+
+			<!--Grid row-->
+			<div class="row">
+
+				<!--Grid column-->
+				<div class="col-lg-5 col-md-12">
+					<!-- Form contact -->
+					<form class="p-5" id="contactForm">
+
+						<div class="md-form form-sm">
+							<i class="fa fa-user prefix grey-text"></i> <input type="text"
+								class="form-control" id="destinationAccount"
+								data-validation-required-message="Please enter the destination account.">
+							<label for="form3">Destination account</label>
+						</div>
+
+						<div class="md-form form-sm">
+							<i class="fa fa-user prefix grey-text"></i> <input type="text"
+								class="form-control" id="originAccount"
+								data-validation-required-message="Please enter the origin account.">
+							<label for="form2">Origin account</label>
+						</div>
+
+						<div class="md-form form-sm">
+							<i class="fa fa-calendar prefix grey-text"></i> <input
+								type="text" class="form-control date" id="scheduleDate"
+								data-validation-required-message="Please enter the schedule date.">
+							<label for="form34">Schedule date (yyyy-MM-dd)</label>
+						</div>
+
+						<div class="md-form form-sm">
+							<i class="fa fa-money prefix grey-text"></i> <input type="text"
+								class="form-control money" id="transferValue"
+								data-validation-required-message="Please enter the transfer value.">
+							<label for="form8">Tranfer value</label>
+						</div>
+
+						<div class="">
+							<span style="display: none; color: #00C851" id="message"></span>
+						</div>
+
+						<div class="" ng-repeat="error in errors" ng-show="errors != null">
+							<span style="color: #880e4f" class="font-weight-bold">{{error.message}}</span>
+						</div>
+
+						<div class="text-center">
+							<button class="btn btn-unique" ng-click='sendTransfer()'>
+								Transfer <i class="fa fa-paper-plane-o ml-1"></i>
+							</button>
+						</div>
+
+					</form>
+					<!-- Form contact -->
+				</div>
+				<!--Grid column-->
+
+				<!--Grid column-->
+				<div class="col-lg-7 col-md-12" >
+
+					<!--Grid row-->
+					<div class="row text-center">
+
+						<!--Grid column-->
+						<div class="col-lg-4 col-md-12 mb-3">
+							<p>
+								<a ng-click="transfersCall()"><i
+									class="fa fa-calendar fa-1x mr-2 grey-text"></i>Get all transfers</a>
+							</p>
+						</div>
+						<!--Grid column-->
+
+					</div>
+					<!--Grid row-->
+					<div class="">
+						<div class="row" ng-repeat="trans in transfers | orderBy: '-id'"
+							style="margin-bottom: 15px;">
+							<div id="{{trans.id}}" class="card card-body"
+								onclick="showItem(this.id);">
+								<a><i class="fa fa-money fa-1x mr-2"></i>{{trans.id}} -
+									{{trans.scheduleDate}}</a>
+								<div style="display: none" id="trans{{trans.id}}">
+									<span class="font-italic">Destination account:</span> {{trans.destinationAccount}}<br /> 
+									<span class="font-italic">Origin account:</span> {{trans.originAccount}}<br /> 
+									<span class="font-italic">Created date:</span> {{trans.createdDate}}<br />
+									<span class="font-italic">Schedule date:</span> {{trans.scheduleDate}}<br /> 
+									<span class="font-italic">Tax:</span>
+									{{trans.tax}}<br /> <span class="font-italic">Transfer
+										value:</span> {{trans.transferValue}}<br />
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!--Grid column-->
+
+			</div>
+			<!--Grid row-->
+
+		</section>
+		<!--Section: Contact-->
+
+	</div>
+	</main>
+	<!--Main layout-->
+
+	<!--Footer-->
+	<footer
+		class="page-footer blue center-on-small-only unique-color-dark pt-0">
+
+		<!-- Social buttons -->
+		<div class="unique-color">
+			<div class="container">
+				<!--Grid row-->
+				<div class="row py-4 d-flex align-items-center">
+
+					<!--Grid column-->
+					<div class="col-md-6 col-lg-5">
+						<h6 class="mb-0 white-text my-2">Get connected with us on
+							social networks!</h6>
+					</div>
+					<!--Grid column-->
+				</div>
+				<!--Grid row-->
+			</div>
+		</div>
+		<!-- Social buttons -->
+
+		<!--Footer Links-->
+		<div class="container mt-5 mb-4 text-center text-md-left">
+		</div>
+		<!--/.Footer Links-->
+
+		<!--Copyright-->
+		<div class="footer-copyright">
+			<div class="container-fluid">
+				© 2015 Copyright: <a href="https://www.MDBootstrap.com">
+					MDBootstrap.com </a>
+
+			</div>
+		</div>
+	</footer>
+	<!--/.Footer-->
+
+	<!-- SCRIPTS -->
+	<!-- JQuery -->
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery.mask.min.js"></script>
+	<!-- Bootstrap tooltips -->
+	<script type="text/javascript" src="js/popper.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/jqBootstrapValidation.js"></script>	
+	<!-- MDB core JavaScript -->
+	<script type="text/javascript" src="js/mdb.min.js"></script>
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript" src="js/angular-resource.js"></script>
+	<script type="text/javascript" src="js/rf.js"></script>
+
+</body>
+
+</html>

@@ -45,7 +45,7 @@ public class TransferService {
 
 		Set<Transfer> transfers = repository.findAll();
 
-		log.info("Transfer found [{}].", transfers.size());
+		log.info("Transfers found [{}].", transfers.size());
 
 		return transfers;
 	}
