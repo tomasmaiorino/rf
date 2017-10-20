@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.springframework.util.Assert;
 
 @Entity
@@ -55,7 +57,7 @@ public class Transfer {
         return originAccount;
     }
 
-    public void setOriginAccount(String originAccount) {
+    public void setOriginAccount(final String originAccount) {
         Assert.hasText(originAccount, "The originAccount must not be null or empty!");
         this.originAccount = originAccount;
     }
@@ -64,7 +66,7 @@ public class Transfer {
         return scheduleDate;
     }
 
-    public void setScheduleDate(LocalDateTime scheduleDate) {
+    public void setScheduleDate(final LocalDateTime scheduleDate) {
         Assert.notNull(scheduleDate, "The scheduleDate must not be null!");
         this.scheduleDate = scheduleDate;
     }
@@ -77,7 +79,7 @@ public class Transfer {
         return tax;
     }
 
-    public void setTax(Double tax) {
+    public void setTax(final Double tax) {
         Assert.notNull(tax, "The tax must not be null!");
         Assert.isTrue(tax > 0, "The tax must greater that zero!");
         this.tax = tax;
@@ -97,4 +99,32 @@ public class Transfer {
         this.transferValue = transferValue;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        Transfer other = (Transfer) obj;
+        if (getId() == null || other.getId() == null) {
+            return false;
+        }
+        return getId().equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getId()).toHashCode();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    }
 }

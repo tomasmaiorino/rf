@@ -123,6 +123,37 @@ public class TransferResourceTest {
     }
 
     //
+    @Test
+    public void build_NullScheduleDateGiven_ShouldThrowException() {
+        // Set up
+        TransferResource resource = TransferTestBuilder.buildResource();
+        resource.setScheduleDate(null);
+
+        // Do test
+        Set<ConstraintViolation<TransferResource>> result = validator.validate(resource, Default.class);
+
+        // Assertions
+        assertNotNull(result);
+        assertThat(result.size(), is(1));
+        assertThat(result.iterator().next().getMessageTemplate(), is("scheduleDateRequired"));
+    }
+
+    @Test
+    public void build_PastScheduleDateGiven_ShouldThrowException() {
+        // Set up
+        TransferResource resource = TransferTestBuilder.buildResource();
+        resource.setScheduleDate("2017-10-17");
+
+        // Do test
+        Set<ConstraintViolation<TransferResource>> result = validator.validate(resource, Default.class);
+
+        // Assertions
+        assertNotNull(result);
+        assertThat(result.size(), is(1));
+        assertThat(result.iterator().next().getMessageTemplate(), is("scheduleDateInvalid"));
+    }
+
+    //
 
     @Test
     public void build_NullTransferValueGiven_ShouldThrowException() {
@@ -152,6 +183,33 @@ public class TransferResourceTest {
         assertNotNull(result);
         assertThat(result.size(), is(1));
         assertThat(result.iterator().next().getMessageTemplate(), is("transferValueInvalid"));
+    }
+
+    @Test
+    public void build_TodayScheduleDateGiven_ShouldBuildTransfer() {
+        // Set up
+        TransferResource resource = TransferTestBuilder.buildResource();
+        resource.setScheduleDate(TransferTestBuilder.getTodayScheduleDateString());
+
+        // Do test
+        Set<ConstraintViolation<TransferResource>> result = validator.validate(resource, Default.class);
+
+        // Assertions
+        assertNotNull(result);
+        assertThat(result.size(), is(0));
+    }
+
+    @Test
+    public void build_AllValuesGiven_ShouldBuildTransfer() {
+        // Set up
+        TransferResource resource = TransferTestBuilder.buildResource();
+
+        // Do test
+        Set<ConstraintViolation<TransferResource>> result = validator.validate(resource, Default.class);
+
+        // Assertions
+        assertNotNull(result);
+        assertThat(result.size(), is(0));
     }
 
 }
