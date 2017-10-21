@@ -2,6 +2,7 @@ package com.tsm.rf.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -13,8 +14,6 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.tsm.rf.service.RateCalculationService;
-
 @FixMethodOrder(MethodSorters.JVM)
 public class RateCalculationServiceTest {
 
@@ -22,6 +21,7 @@ public class RateCalculationServiceTest {
     private Integer mininalRate = 3;
     private Integer mininalRatePercente = 3;
     private Integer secondRate = 12;
+    private Double mininalValueAllowed = 100d;
 
     @Before
     public void setUp() {
@@ -29,6 +29,8 @@ public class RateCalculationServiceTest {
         ReflectionTestUtils.setField(service, "mininalRate", mininalRate);
         ReflectionTestUtils.setField(service, "mininalRatePercente", mininalRatePercente);
         ReflectionTestUtils.setField(service, "secondRate", secondRate);
+        ReflectionTestUtils.setField(service, "mininalValueAllowed", mininalValueAllowed);
+
     }
 
     @Test
@@ -211,7 +213,7 @@ public class RateCalculationServiceTest {
         Long intervalDays = 41l;
         LocalDateTime scheduleDate = LocalDateTime.now();
         scheduleDate = scheduleDate.plusDays(intervalDays);
-        Double transferValue = 10.12d;
+        Double transferValue = 110.12d;
         Double expectedResult = (2d / 100d) * transferValue;
 
         // Do test
@@ -220,6 +222,21 @@ public class RateCalculationServiceTest {
         // Assertions
         assertNotNull(result);
         assertThat(result, is(expectedResult));
+    }
+
+    @Test
+    public void computeRate_NotApplicableRateGiven_ShouldReturnNull() {
+        // Set up
+        Long intervalDays = 41l;
+        LocalDateTime scheduleDate = LocalDateTime.now();
+        scheduleDate = scheduleDate.plusDays(intervalDays);
+        Double transferValue = 1d;
+
+        // Do test
+        Double result = service.computeRate(scheduleDate, transferValue);
+
+        // Assertions
+        assertNull(result);
     }
 
 }

@@ -39,8 +39,8 @@ app.controller('SendTransferCtrl', [ '$scope', 'sendTransferService', 'transferS
 		console.log("recovering transfers :)");
 		$scope.transfers = transferService();
 		$scope.transfers.$promise.then(function(result) {
-			console.log('result ' + result);
-			console.log($scope.transfers.length);
+			//console.log('result ' + result);
+			//console.log($scope.transfers.length);
 		}, function(error) {});
 	}
 	$scope.sendTransfer = function() {
@@ -51,22 +51,28 @@ app.controller('SendTransferCtrl', [ '$scope', 'sendTransferService', 'transferS
 		content.originAccount = $('#originAccount').val();
 		content.scheduleDate = $('#scheduleDate').val();
 		content.transferValue = $('#transferValue').val();
-		console.log("content " + content);
+		//console.log("content " + content);
 		$scope.sentTransfer = sendTransferService(JSON.stringify(content));
 		$scope.sentTransfer.$promise.then(function(result) {
-			console.log(result);
+			//console.log(result);
 			clearForm();
 			showSuccessMessage('Transfer ' + result.id + ' successfully scheduled to ' + result.scheduleDate);
 			//update transfers -- start
 			$scope.transfers = transferService();
 			$scope.transfers.$promise.then(function(result) {
-				console.log('result ' + result);
-				console.log($scope.transfers.length);
+				//console.log('result ' + result);
+				//console.log($scope.transfers.length);
 			}, function(error) {});
 		//update transfers -- end
 		}, function(error) {
 			console.log('setting error: ' + error.data);
-			$scope.errors = error.data;
+			if (angular.isArray(error.data)) {
+				$scope.errors = error.data;
+			} else {
+				temp = [];
+				temp.push(error.data);
+				$scope.errors = temp;
+			}
 		});
 	}
 } ]);
@@ -79,11 +85,9 @@ function clearForm() {
 }
 function showSuccessMessage(message) {
 	if (message != null) {
-		console.log("showing ");
 		$('#message').html(message);
 		$('#message').show('slow');
 	} else {
-		console.log("hidding");
 		$('#message').html('');
 		$('#message').hide('slow');
 	}

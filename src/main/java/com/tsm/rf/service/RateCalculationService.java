@@ -24,6 +24,9 @@ public class RateCalculationService {
     @Value("${second.rate}")
     private Integer secondRate;
 
+    @Value("${minimal.value.allowed}")
+    private Double mininalValueAllowed;
+
     public Double computeRate(final LocalDateTime scheduleDate, final Double transferValue) {
         Assert.notNull(scheduleDate, "The scheduleDate must not be null!");
         Assert.isTrue(!scheduleDate.isBefore(LocalDateTime.now().truncatedTo(ChronoUnit.DAYS)),
@@ -35,6 +38,7 @@ public class RateCalculationService {
 
         Long intervalDays = ChronoUnit.DAYS.between(now.truncatedTo(ChronoUnit.DAYS),
             scheduleDate.truncatedTo(ChronoUnit.DAYS));
+
         BigDecimal rate = new BigDecimal(0);
         BigDecimal tv = new BigDecimal(transferValue);
 
@@ -43,10 +47,10 @@ public class RateCalculationService {
         } else if (intervalDays > 0 && intervalDays <= 10) {
             rate = new Rate(TYPE_B, tv, secondRate, null, intervalDays).compute();
         } else {
-            rate = new Rate(TYPE_C, tv, null, null, intervalDays).compute();
+            rate = new Rate(TYPE_C, tv, intervalDays).compute();
         }
 
-        return rate.doubleValue();
+        return rate != null ? rate.doubleValue() : null;
     }
 
     private class Rate {
@@ -61,21 +65,27 @@ public class RateCalculationService {
 
         private Long intervalDays;
 
-        public Rate(String rateType, BigDecimal transferValue, Integer rateCalculation, Integer ratePercente,
-            Long intervalDays) {
+        public Rate(final String rateType, final BigDecimal transferValue, final Long intervalDays) {
+            this.rateType = rateType;
+            this.intervalDays = intervalDays;
+            this.transferValue = transferValue;
+        }
+
+        public Rate(final String rateType, final BigDecimal transferValue, final Integer rateCalculation, final Integer ratePercente,
+            final Long intervalDays) {
             this.rateType = rateType;
             this.transferValue = transferValue;
             this.rateCalculation = rateCalculation;
             this.ratePercente = ratePercente;
             this.intervalDays = intervalDays;
-
         }
 
         public BigDecimal compute() {
             BigDecimal rate = new BigDecimal(0);
+            rate = rate.setScale(2, BigDecimal.ROUND_HALF_UP);
             switch (rateType) {
                 case TYPE_A:
-                    rate = rate.add(new BigDecimal(rateCalculation)).add(calculate(ratePercente.doubleValue(), transferValue));
+                    rate = rate.add(new BigDecimal(rateCalculation)).add(calculatePercentage(ratePercente.doubleValue(), transferValue));
                     break;
                 case TYPE_B:
                     rate = rate.add(new BigDecimal(rateCalculation)).multiply(new BigDecimal(intervalDays));
@@ -90,19 +100,21 @@ public class RateCalculationService {
         private BigDecimal computeTypeC() {
             BigDecimal rate = null;
             if (intervalDays > 10 && intervalDays <= 20) {
-                rate = calculate(8d, transferValue);
+                rate = calculatePercentage(8d, transferValue);
             } else if (intervalDays > 20 && intervalDays <= 30) {
-                rate = calculate(6d, transferValue);
+                rate = calculatePercentage(6d, transferValue);
             } else if (intervalDays > 30 && intervalDays <= 40) {
-                rate = calculate(4d, transferValue);
-            } else if (intervalDays > 40) {
-                rate = calculate(2d, transferValue);
+                rate = calculatePercentage(4d, transferValue);
+            } else if (intervalDays > 40 && transferValue.doubleValue() > mininalValueAllowed) {
+                rate = calculatePercentage(2d, transferValue);
+            } else {
+                return null;
             }
             return rate;
         }
     }
 
-    private BigDecimal calculate(double percentage, BigDecimal transferValue) {
+    private BigDecimal calculatePercentage(double percentage, BigDecimal transferValue) {
         return new BigDecimal(percentage / 100d).multiply(transferValue);
     }
 

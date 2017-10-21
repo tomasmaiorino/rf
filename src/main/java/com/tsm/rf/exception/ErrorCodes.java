@@ -15,5 +15,6 @@ public interface ErrorCodes {
     public static final String TRANSFER_VALUE_INVALID = "transferValueInvalid";
 
     public static final String TRANSFERS_NOT_FOUND = "destinationAccountRequired";
+    public static final String INAPPLICABLE_TAX = "inapplicableTax";
 
 }

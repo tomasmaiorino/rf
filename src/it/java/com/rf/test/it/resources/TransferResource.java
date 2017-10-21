@@ -9,136 +9,154 @@ import com.tsm.rf.util.TransferTestBuilder;
 
 public class TransferResource {
 
-	public static TransferResource build() {
-		return new TransferResource();
-	}
+    public static TransferResource build() {
+        return new TransferResource();
+    }
 
-	public TransferResource assertFields() {
-		if (Objects.isNull(destinationAccount)) {
-			destinationAccount();
-		}
-		if (Objects.isNull(originAccount)) {
-			originAccount();
-		}
-		if (Objects.isNull(scheduleDate)) {
-			scheduleDate();
-		}
-		if (Objects.isNull(transferValue)) {
-			transferValue();
-		}
-		return this;
-	}
+    private Long id;
 
-	public TransferResource scheduleDate(final String scheduleDate) {
-		this.setScheduleDate(scheduleDate);
-		return this;
-	}
+    private String destinationAccount;
 
-	public TransferResource scheduleDate() {
-		return scheduleDate(TransferTestBuilder.getScheduleDateString());
-	}
+    private String originAccount;
 
-	public TransferResource originAccount(final String originAccount) {
-		this.setOriginAccount(originAccount);
-		return this;
-	}
+    private String scheduleDate;
 
-	public TransferResource originAccount() {
-		return originAccount(TransferTestBuilder.getOriginAccount());
-	}
+    private Double transferValue;
 
-	public TransferResource destinationAccount(final String destinationAccount) {
-		this.setDestinationAccount(destinationAccount);
-		return this;
-	}
+    private Double tax;
 
-	public TransferResource destinationAccount() {
-		return destinationAccount(TransferTestBuilder.getDestinationAccount());
-	}
+    private String createdDate;
 
-	public TransferResource transferValue(final Double transferValue) {
-		this.setTransferValue(transferValue);
-		return this;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public TransferResource transferValue() {
-		return transferValue(TransferTestBuilder.getTransferValue());
-	}
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	public TransferResource create() {
-		assertFields();
-		return given().contentType("application/json").body(this).when().post(ServicesEndpoints.TRANSFER_POST)
-				.as(TransferResource.class);
-	}
+    public String getDestinationAccount() {
+        return destinationAccount;
+    }
 
-	private Long id;
+    public void setDestinationAccount(final String destinationAccount) {
+        this.destinationAccount = destinationAccount;
+    }
 
-	private String destinationAccount;
+    public String getOriginAccount() {
+        return originAccount;
+    }
 
-	private String originAccount;
+    public void setOriginAccount(final String originAccount) {
+        this.originAccount = originAccount;
+    }
 
-	private String scheduleDate;
+    public String getScheduleDate() {
+        return scheduleDate;
+    }
 
-	private Double transferValue;
+    public void setScheduleDate(final String scheduleDate) {
+        this.scheduleDate = scheduleDate;
+    }
 
-	private Double tax;
+    public Double getTransferValue() {
+        return transferValue;
+    }
 
-	private String createdDate;
+    public void setTransferValue(final Double transferValue) {
+        this.transferValue = transferValue;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Double getTax() {
+        return tax;
+    }
 
-	public void setId(final Long id) {
-		this.id = id;
-	}
+    public void setTax(final Double tax) {
+        this.tax = tax;
+    }
 
-	public String getDestinationAccount() {
-		return destinationAccount;
-	}
+    public String getCreatedDate() {
+        return createdDate;
+    }
 
-	public void setDestinationAccount(final String destinationAccount) {
-		this.destinationAccount = destinationAccount;
-	}
+    public void setCreatedDate(final String createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public String getOriginAccount() {
-		return originAccount;
-	}
+    public static class TransferSupport {
 
-	public void setOriginAccount(final String originAccount) {
-		this.originAccount = originAccount;
-	}
+        public TransferResource resource;
 
-	public String getScheduleDate() {
-		return scheduleDate;
-	}
+        private TransferSupport() {
+            resource = new TransferResource();
+        }
 
-	public void setScheduleDate(final String scheduleDate) {
-		this.scheduleDate = scheduleDate;
-	}
+        public static TransferSupport Support() {
+            return new TransferSupport();
+        }
 
-	public Double getTransferValue() {
-		return transferValue;
-	}
+        public TransferResource build() {
+            return resource;
+        }
 
-	public void setTransferValue(final Double transferValue) {
-		this.transferValue = transferValue;
-	}
+        public TransferSupport assertFields() {
+            if (Objects.isNull(resource.getDestinationAccount())) {
+                destinationAccount();
+            }
+            if (Objects.isNull(resource.getOriginAccount())) {
+                originAccount();
+            }
+            if (Objects.isNull(resource.getScheduleDate())) {
+                scheduleDate();
+            }
+            if (Objects.isNull(resource.getTransferValue())) {
+                transferValue();
+            }
+            return this;
+        }
 
-	public Double getTax() {
-		return tax;
-	}
+        public TransferSupport scheduleDate(final String scheduleDate) {
+            resource.setScheduleDate(scheduleDate);
+            return this;
+        }
 
-	public void setTax(final Double tax) {
-		this.tax = tax;
-	}
+        public TransferSupport scheduleDate() {
+            return scheduleDate(TransferTestBuilder.getScheduleDateString());
+        }
 
-	public String getCreatedDate() {
-		return createdDate;
-	}
+        public TransferSupport originAccount(final String originAccount) {
+            resource.setOriginAccount(originAccount);
+            return this;
+        }
 
-	public void setCreatedDate(final String createdDate) {
-		this.createdDate = createdDate;
-	}
+        public TransferSupport originAccount() {
+            return originAccount(TransferTestBuilder.getOriginAccount());
+        }
+
+        public TransferSupport destinationAccount(final String destinationAccount) {
+            resource.setDestinationAccount(destinationAccount);
+            return this;
+        }
+
+        public TransferSupport destinationAccount() {
+            return destinationAccount(TransferTestBuilder.getDestinationAccount());
+        }
+
+        public TransferSupport transferValue(final Double transferValue) {
+            resource.setTransferValue(transferValue);
+            return this;
+        }
+
+        public TransferSupport transferValue() {
+            return transferValue(TransferTestBuilder.getTransferValue());
+        }
+
+        public TransferResource create() {
+            assertFields();
+            return given().contentType("application/json").body(resource).when().post(ServicesEndpoints.TRANSFER_POST)
+                .as(TransferResource.class);
+        }
+
+    }
 
 }

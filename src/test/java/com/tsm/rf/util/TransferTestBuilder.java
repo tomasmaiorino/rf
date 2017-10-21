@@ -42,6 +42,16 @@ public class TransferTestBuilder {
         return getScheduleDate().format(formatter);
     }
 
+    public static String getScheduleDateString(int intervalDays) {
+        LocalDateTime now = LocalDateTime.now();
+        if (intervalDays >= 0) {
+            now = now.plusDays(intervalDays);
+        } else {
+            now = now.minusDays(intervalDays);
+        }
+        return now.format(formatter);
+    }
+
     public static Double getTax() {
         BigDecimal bd = new BigDecimal(RandomUtils.nextDouble(1, 1000));
         bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -80,15 +90,10 @@ public class TransferTestBuilder {
         return transfer;
     }
 
-    private static Transfer buildModel(final String destinationAccount, final String originAccount,
+    public static Transfer buildModel(final String destinationAccount, final String originAccount,
         final LocalDateTime scheduleDate, final Double transferValue, final Double tax) {
-        Transfer transfer = new Transfer();
-        transfer.setDestinationAccount(destinationAccount);
-        transfer.setOriginAccount(originAccount);
-        transfer.setScheduleDate(scheduleDate);
-        transfer.setTax(tax);
-        transfer.setTransferValue(transferValue);
-        return transfer;
+        return Transfer.TransferBuilder.Transfer(destinationAccount, originAccount,
+            scheduleDate, transferValue).tax(tax).build();
     }
 
 }

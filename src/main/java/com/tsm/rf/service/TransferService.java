@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import com.tsm.rf.exception.BadRequestException;
+import com.tsm.rf.exception.ErrorCodes;
 import com.tsm.rf.model.Transfer;
 import com.tsm.rf.repository.TransferRepository;
 
@@ -32,6 +34,12 @@ public class TransferService {
 
 		Double rate = rateService.computeRate(transfer.getScheduleDate(), transfer.getTransferValue());
 		log.info("Rate calculated [{}].", rate);
+
+		if (rate == null) {
+		   log.info("Inapplicable tax given [{}].", rate);
+		   throw new BadRequestException(ErrorCodes.INAPPLICABLE_TAX);
+		}
+
 		transfer.setTax(rate);
 
 		repository.save(transfer);

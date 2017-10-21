@@ -14,7 +14,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.tsm.rf.model.Transfer;
+import com.tsm.rf.util.TransferTestBuilder;
 
 @FixMethodOrder(MethodSorters.JVM)
 public class TransferTest {
@@ -157,13 +157,7 @@ public class TransferTest {
     }
 
     private Transfer buildTransfer() {
-        Transfer transfer = new Transfer();
-        transfer.setDestinationAccount(destinationAccount);
-        transfer.setOriginAccount(originAccount);
-        transfer.setScheduleDate(scheduleDate);
-        transfer.setTransferValue(transferValue);
-        transfer.setTax(tax);
-        return transfer;
+        return TransferTestBuilder.buildModel(destinationAccount, originAccount, scheduleDate, transferValue, tax);
     }
 
 }

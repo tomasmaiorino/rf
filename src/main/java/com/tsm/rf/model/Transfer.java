@@ -39,6 +39,9 @@ public class Transfer {
     @Column(name = "transfer_value", nullable = false)
     private Double transferValue;
 
+    private Transfer() {
+    }
+
     @PrePersist
     private void setCreateDate() {
         this.createDate = LocalDateTime.now();
@@ -126,5 +129,34 @@ public class Transfer {
     @Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this);
+    }
+
+    public static class TransferBuilder {
+
+        private final Transfer transfer;
+
+        private TransferBuilder(final String destinationAccount, final String originAccount, final LocalDateTime scheduleDate,
+            final Double transferValue) {
+            transfer = new Transfer();
+            transfer.setDestinationAccount(destinationAccount);
+            transfer.setOriginAccount(originAccount);
+            transfer.setScheduleDate(scheduleDate);
+            transfer.setTransferValue(transferValue);
+        }
+
+        public TransferBuilder tax(final Double tax) {
+            transfer.setTax(tax);
+            return this;
+        }
+
+        public static TransferBuilder Transfer(final String destinationAccount, final String originAccount,
+            final LocalDateTime scheduleDate,
+            final Double transferValue) {
+            return new TransferBuilder(destinationAccount, originAccount, scheduleDate, transferValue);
+        }
+
+        public Transfer build() {
+            return transfer;
+        }
     }
 }

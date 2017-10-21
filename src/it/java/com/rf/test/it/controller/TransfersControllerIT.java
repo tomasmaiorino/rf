@@ -41,7 +41,7 @@ public class TransfersControllerIT {
     @Test
     public void save_NullDestinationAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().destinationAccount(null);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().destinationAccount(null).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -52,7 +52,7 @@ public class TransfersControllerIT {
     @Test
     public void save_EmptyDestinationAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().destinationAccount("");
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().destinationAccount("").build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -63,8 +63,8 @@ public class TransfersControllerIT {
     @Test
     public void save_LargeDestinationAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields()
-            .destinationAccount(TransferTestBuilder.LARGE_DESTINATION_ACCOUNT);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields()
+            .destinationAccount(TransferTestBuilder.LARGE_DESTINATION_ACCOUNT).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -75,7 +75,7 @@ public class TransfersControllerIT {
     @Test
     public void save_NullOriginAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().originAccount(null);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().originAccount(null).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -85,7 +85,7 @@ public class TransfersControllerIT {
     @Test
     public void save_EmptyOriginAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().originAccount("");
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().originAccount("").build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -96,8 +96,8 @@ public class TransfersControllerIT {
     @Test
     public void save_LargeOriginAccountGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields()
-            .originAccount(TransferTestBuilder.LARGE_ORIGIN_ACCOUNT);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields()
+            .originAccount(TransferTestBuilder.LARGE_ORIGIN_ACCOUNT).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -108,7 +108,7 @@ public class TransfersControllerIT {
     @Test
     public void save_NullScheduleDateGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().scheduleDate(null);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().scheduleDate(null).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -118,7 +118,8 @@ public class TransfersControllerIT {
     @Test
     public void save_InvalidScheduleDateGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().scheduleDate(TransferTestBuilder.INVALID_DATE);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().scheduleDate(TransferTestBuilder.INVALID_DATE)
+            .build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -128,7 +129,8 @@ public class TransfersControllerIT {
     @Test
     public void save_PastScheduleDateGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().scheduleDate(TransferTestBuilder.PAST_SCHEDULE_DATE);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields()
+            .scheduleDate(TransferTestBuilder.PAST_SCHEDULE_DATE).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -138,7 +140,7 @@ public class TransfersControllerIT {
     @Test
     public void save_NullTransferValueGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().transferValue(null);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().transferValue(null).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -148,7 +150,7 @@ public class TransfersControllerIT {
     @Test
     public void save_InvalidTransferValueGiven_ShouldReturnError() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields().transferValue(0d);
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().transferValue(0d).build();
 
         // Do Test
         given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
@@ -157,9 +159,25 @@ public class TransfersControllerIT {
     }
 
     @Test
+    public void save_InapplicableTaxGiven_ShouldReturnError() {
+        // Set Up
+        TransferResource resource = TransferResource.TransferSupport.Support()
+            .scheduleDate(TransferTestBuilder.getScheduleDateString(41))
+            .transferValue(90.00)
+            .assertFields().build();
+
+        // Do Test
+        given().body(resource).contentType(ContentType.JSON).when().post(ServicesEndpoints.TRANSFER_POST).then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("message", is("The tax can not be applied."));
+    }
+
+    @Test
     public void save_TodayScheduleDateGiven_ShouldCreateTransfer() {
         // Set Up
-        TransferResource resource = TransferResource.build().scheduleDate(TransferTestBuilder.getTodayScheduleDateString()).assertFields();
+        TransferResource resource = TransferResource.TransferSupport.Support()
+            .scheduleDate(TransferTestBuilder.getTodayScheduleDateString()).assertFields()
+            .build();
 
         // Do Test
         ValidatableResponse response = given().contentType(ContentType.JSON).body(resource).when()
@@ -175,7 +193,7 @@ public class TransfersControllerIT {
     @Test
     public void save_ValidResourceGiven_ShouldCreateTransfer() {
         // Set Up
-        TransferResource resource = TransferResource.build().assertFields();
+        TransferResource resource = TransferResource.TransferSupport.Support().assertFields().build();
 
         // Do Test
         ValidatableResponse response = given().contentType(ContentType.JSON).body(resource).when()
@@ -191,7 +209,7 @@ public class TransfersControllerIT {
     @Test
     public void find_ValidResourceGiven_ShouldReturnContent() {
         // Set Up
-        TransferResource.build().create();
+        TransferResource.TransferSupport.Support().create();
 
         // Do Test
         given().contentType(ContentType.JSON).when().get(ServicesEndpoints.TRANSFER_FIND + "?images=false").then()
