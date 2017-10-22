@@ -1,16 +1,16 @@
-Esta é uma aplicacao de estuda que executa duas tarefas: cria uma transacao calculando sua taxa a partir de uma regra pre estabelecida, retornando a transacao criada e disponiliza uma url para recuperar todas as transacaoes criadas.
+Esta é uma aplicacao de estudo que executa duas tarefas: cria uma transacao calculando sua taxa a partir de uma regra pre estabelecida retornando a transacao criada e disponiliza uma url para recuperar todas as transacaoes criadas.
 
 A aplicacao foi criada utilizando Spring boot (1.5) o que tornou o desenvolvimento mais agil. 
 As transacoes pode ser criadas e consultadas utilizando rest api's, o que alem de permitir que as transacoes possam ser facilmente criadas e consultadas por qualquer client (paginas html, outros rest services, etc),
-nao obriga que aplicacao tenha uma camada de frontend.
-Por nao se tratar de uma aplicacao complexa, ela foi desenvolvida utilizando o MVC basico: um controller que invoca um service que tem acesso a camada de persistencia. Para a criaco do model foi utilizado um Builder com Fluent Interface, o que ajuda na criacao de um model mais conciso "forcando" os atributos obrigatorios serem informados e evita a utilizacao de metodos set para inserir os atributos nao obrigatorios.
-Para nao expor o model ao client, foi um criado um resource que e responsavel receber e retornar os dados para o cliente. A conversao do resource para model e de model para resource é feita por uma classe parser.
+nao obriga que aplicacao tenha uma camada de frontend para a criacao e consulta das transacoes.
+Por nao se tratar de uma aplicacao complexa, ela foi desenvolvida utilizando o MVC basico: um controller que invoca um service que tem acesso a camada de persistencia. Para a criaco do model foi utilizado um Builder com Fluent Interface, o que ajuda na criacao de um model mais conciso "forcando" os atributos obrigatorios serem informados durante a criacao do model e evita a utilizacao de metodos set para inserir os atributos nao obrigatorios.
+Para nao expor o model ao client foi um criado um resource que recebe e retorna os dados para o cliente. A conversao do resource para model e do model para resource é feita por uma classe parser.
 
 Para os testes unitarios foi criado uma classe helper para centralizar a criacao do resource, model, atributos invalidos, etc. O que permite com que qualquer alteracao necessaria na massa de teste seja feita em um unico ponto.
 Ja para o teste de integracao foi criada um support class, dentro do resource class, utilizando Fluent Interface o que ajuda a especificar os atributos devem ser alterados ou utilizados nos testes.
 
 
-Obs: Este teste nao exige uma interface grafica, porem para facilitar a validacao foi criado uma pagina index usando spring mvc, bootstrap na parte de layout e AngularJs (1.5) na parte de consulta da api e manipulacao do DOM.
+Obs: Este teste nao exige uma interface grafica, porem para facilitar a validacao foi criado uma pagina html index usando spring mvc, bootstrap na parte de layout e AngularJs (1.5) na parte de consulta da api e manipulacao do DOM.
 ## Used Technologies
 
 **1. Java version 8.**
