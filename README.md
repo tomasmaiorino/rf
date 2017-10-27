@@ -1,7 +1,6 @@
-It's a test application which perform a simple CRUD in to different resources and also provide a way to filter the values returned.
+This is a study application that performs two tasks: create a transaction by calculating its rate from a pre-established rule returning the created transaction and provides a url to retrieve all the transactions created.
 
 This application is running under Spring Boot and it uses a embedded
-
 
 ## Used Technologies
 
@@ -14,21 +13,24 @@ This application is running under Spring Boot and it uses a embedded
 ## Additional Technologies
 
 **Tests:** The tests are defined as use case of the Junit. The tests have been made available in the structure: src/test/java.
+The integration tests have been made available in the structure: src/it/java.
 
 **Spring Boot:** It is important to check the application's profiles once that its use more than one.
 
 **Maven:** Life cycle management and project build.
 
-## Considerations
- As I choose do not to return the model direct to the view, but to use a resource class for any model instead. I couldn't to use the spring's Projection to apply that return filter required on the test and didn't have enough time to found a more elegant solution.
-
+**1. Tanto a conta de destino quanto a origem são obrigatorias.
+**2. O tamanho da conta de destino e origem deve estar entre 3 e 20.
+**3. A data agendada não deve ser anterior a hoje.
+**4. A data agendada deve ter esse formato aaaa-MM-dd (ano-mês-dia).
+**5. O valor de transferência deve ser maior que 0.
 
 ## Business Rules
-**1. The product's name and description are required.
-**2. The image's type is required.
-**3. If an image has been useb by a product, the image can not be deleted.
-**4. If a product has a sub product it can be deleted.
-**5. A product can only be associated to an image that has not been used by any other product.
+**1. Both destination and origin account are required.
+**2. The destination and origin account length must be between 3 and 20.
+**3. The schedule date must not be before today.
+**4. The schedule date must follow this format yyyy-MM-dd.
+**5. The transfer value must be higher than 0.
 
 ## Usage In Local Machine
 
@@ -53,102 +55,15 @@ $ mvn verify -DskipItTest=false
 ###### To run the application execute the maven command:
 $ mvn spring-boot:run
 
-###### To create an image using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/images -d "{\"type\": \"jpg\"}"
+###### To create a transaction using curl:
+$ curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d "{\"destinationAccount\": \"889977\", \"originAccount\": \"775535\", \"scheduleDate\": \"2017-12-30\", \"transferValue\": 122.10}" 'http://localhost:8080/api/v1/transfers'
 Sample Response:
-{"id":1,"type":"jpg"}
+{"id":3,"destinationAccount":"889977","originAccount":"775535","scheduleDate":"2017-12-30","transferValue":122.1,"createdDate":"2017-10-20","tax":2.4419999999999997}
 
-###### To update an image using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X PUT http://localhost:8080/api/v1/images/1 -d "{\"type\": \"png\"}"
+###### To recover all transactions using curl:
+$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/transfers
 Sample Response:
-{"id":1,"type":"png"}
-
-###### To find an image using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/images/1
-Sample Response:
-{"id":1,"type":"png"}
-
-
-###### To delete an image using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X DELETE http://localhost:8080/api/v1/images/1
-Sample Response:
-HTTP/1.1 204
-Date: Thu, 12 Oct 2017 19:41:45 GMT
-
-###### To create a product with neither image nor parent using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/products -d "{\"name\": \"product name\", \"description\":\"product description\"}"
-Sample Response:
-{"id":1,"name":"product name","description":"product description","parent":null,"subProducts":null,"productImages":null}
-
-###### To update a product with neither image nor parent using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X PUT http://localhost:8080/api/v1/products/1 -d "{\"name\": \"product name\", \"description\":\"product description updated\"}"
-Sample Response:
-{"id":1,"name":"product name","description":"product description updated","parent":null,"subProducts":null,"productImages":null}
-
-
-###### To delete a product with neither image nor parent using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X DELETE http://localhost:8080/api/v1/products/1
-Sample Response:
-HTTP/1.1 204
-Date: Thu, 12 Oct 2017 19:41:45 GMT
-
-###### To create a product with a parent:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/products -d "{\"name\": \"child product name\",\"description\":\"product description\", \"parent\":{\"id\":1}}"
-Sample Response:
-{"id":2,"name":"child product name","parent":null,"subProducts":null,"productImages":null}
-
-
-###### To create a product with one or more images using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X POST http://localhost:8080/api/v1/products -d "{\"name\": \"product name\",\"description\":\"product description\", \"productImages\":[{\"id\":1}]}"
-Sample Response:
-{"id":4,"name":"product name","description":"product description","parent":null,"subProducts":null,"productImages":[{"id":2,"type":"jpg"}]}
-
-
-###### To update a product with one or more images using curl:
-
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X PUT http://localhost:8080/api/v1/products/1 -d "{\"name\": \"product name changed\",\"description\":\"product description\", \"productImages\":[{\"id\":1}]}"
-Sample Response:
-{"id":4,"name":"product name changed","description":"product description","parent":null,"subProducts":null,"productImages":[{"id":2,"type":"jpg"}]}
-
-
-###### To find a product using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/products/1
-Sample Response:
-{"id":2,"name":"product name","description":"product description","parent":null,"subProducts":[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":null,"productImages":null}]
-
-
-###### To find the product's images using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/products/1/images
-Sample Response:
-[{"id":2,"type":"jpg"}]
-
-###### To find the product's sub-products using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/products/1/sub-products
-Sample Response:
-[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":null,"productImages":null}]
-
-
-###### To find all product's using curl:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET http://localhost:8080/api/v1/products
-Sample Response:
-[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":[],"productImages":[]},{"id":2,"name":"product name","description":"product description","parent":null,"subProducts":[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":null,"productImages":null}],"productImages":[]},{"id":4,"name":"product name changed","description":"product description","parent":null,"subProducts":[],"productImages":[{"id":2,"type":"jpg"}]}]t
-
-
-###### To find all product's but not returning neither sub-products nor images:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET "http://localhost:8080/api/v1/products?sub=false&images=false"
-Sample Response:
-[{"id":2,"name":"product name","description":"product description","parent":null,"subProducts":[],"productImages":[]},{"id":4,"name":"product name changed","description":"product description","parent":null,"subProducts":[],"productImages":[]},{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":[],"productImages":[]}]t
-
-###### To find all product's but not returning sub-products:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET "http://localhost:8080/api/v1/products?images=false"
-Sample Response:
-[{"id":4,"name":"product name changed","description":"product description","parent":null,"subProducts":[],"productImages":[]},{"id":2,"name":"product name","description":"product description","parent":null,"subProducts":[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":null,"productImages":null}],"productImages":[]},{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":[],"productImages":[]}]
-
-###### To find all product's but not returning product images:
-$ curl -i -H "Content-Type:application/json" -H "Accept:application/json" -X GET "http://localhost:8080/api/v1/products?images=false"
-Sample Response:
-[{"id":4,"name":"product name changed","description":"product description","parent":null,"subProducts":[],"productImages":[]},{"id":2,"name":"product name","description":"product description","parent":null,"subProducts":[{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":null,"productImages":null}],"productImages":[]},{"id":3,"name":"child product name","description":"product description","parent":null,"subProducts":[],"productImages":[]}]
-
+[{"id":3,"destinationAccount":"889977","originAccount":"775535","scheduleDate":"2017-12-30","transferValue":122.1,"createdDate":"2017-10-20","tax":2.4419999999999997},{"id":2,"destinationAccount":"889977","originAccount":"775535","scheduleDate":"2017-12-30","transferValue":122.1,"createdDate":"2017-10-20","tax":2.4419999999999997},{"id":1,"destinationAccount":"889977","originAccount":"775535","scheduleDate":"2017-12-30","transferValue":122.1,"createdDate":"2017-10-20","tax":2.4419999999999997}]
 
 ## Final Considerations
 In order to facilitate some tests, I created simple swagger doc through the spring-fox api.
